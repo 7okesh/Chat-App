@@ -41,49 +41,6 @@ body {
     flex-direction: column;
 }
 
-/* GitHub Pages Banner */
-.gh-pages-banner {
-    background: #fffbeb;
-    color: #92400e;
-    border-bottom: 1px solid #fde68a;
-    padding: 8px 16px;
-    font-size: 0.85rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 8px;
-}
-
-.gh-pages-banner.hidden {
-    display: none;
-}
-
-.server-config-group {
-    display: flex;
-    gap: 6px;
-    align-items: center;
-}
-
-.server-config-group input {
-    padding: 4px 8px;
-    font-size: 0.82rem;
-    border: 1px solid #cbd5e1;
-    border-radius: 4px;
-    outline: none;
-    min-width: 220px;
-}
-
-.mini-btn {
-    background: var(--primary);
-    color: white;
-    border: none;
-    border-radius: 4px;
-    padding: 4px 10px;
-    font-size: 0.82rem;
-    font-weight: 600;
-    cursor: pointer;
-}
 
 /* Header & Navbar */
 .navbar {

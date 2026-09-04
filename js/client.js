@@ -1,35 +1,6 @@
-// Helper: Determine Socket.IO server connection URL
-const isGhPages = window.location.hostname.endsWith('github.io');
-const ghBanner = document.getElementById('gh-pages-banner');
-const customServerInp = document.getElementById('custom-server-inp');
-const saveServerBtn = document.getElementById('save-server-btn');
-
-let serverUrl;
-if (isGhPages) {
-    if (ghBanner) ghBanner.classList.remove('hidden');
-    const savedServer = localStorage.getItem('chitchat_server_url');
-    if (savedServer) {
-        serverUrl = savedServer;
-        if (customServerInp) customServerInp.value = savedServer;
-    }
-} else if (!window.location.protocol.startsWith('http')) {
-    // If opened directly from file system (file:///)
-    serverUrl = 'http://localhost:8000';
-}
-// If served from Express (e.g. http://localhost:8000 or http://192.168.1.5:8000), serverUrl is undefined (same origin)
-
-if (saveServerBtn && customServerInp) {
-    saveServerBtn.addEventListener('click', () => {
-        const url = customServerInp.value.trim();
-        if (url) {
-            localStorage.setItem('chitchat_server_url', url);
-            window.location.reload();
-        }
-    });
-}
-
-// Initialize Socket.io connection
-const socket = io(serverUrl);
+// Connect automatically to the current host (works on Render, Railway, localhost, Wi-Fi IP, etc.)
+const socketUrl = window.location.protocol.startsWith('http') ? undefined : 'http://localhost:8000';
+const socket = io(socketUrl);
 
 // DOM Elements
 const form = document.getElementById('send-container');
