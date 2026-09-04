@@ -1,4 +1,4 @@
-name: Node.js CI
+name: Node.js CI & Deploy
 
 on:
   push:
@@ -13,7 +13,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
@@ -31,3 +31,16 @@ jobs:
 
     - name: Verify server startup and health endpoint
       run: npm test
+
+    - name: Trigger Render Deploy Hook (on push to main)
+      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      env:
+        RENDER_DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
+      run: |
+        if [ -n "$RENDER_DEPLOY_HOOK" ]; then
+          echo "Triggering Render re-deployment via Deploy Hook..."
+          curl -s -X POST "$RENDER_DEPLOY_HOOK" > /dev/null
+          echo "Render redeploy request dispatched successfully!"
+        else
+          echo "Render automatically deploys on every git push via GitHub repo connection."
+        fi
