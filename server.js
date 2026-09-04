@@ -1,19 +1,34 @@
 const express = require('express');
 const http = require('http');
 const path = require('path');
+const os = require('os');
 const { Server } = require('socket.io');
 const cors = require('cors');
 
 const app = express();
 const server = http.createServer(app);
 
-// Enable CORS for external client flexibility
+// Enable CORS for external origins and cross-origin clients
 app.use(cors());
 
-// Serve static frontend assets from the root directory
+// Serve static frontend assets from root directory
 app.use(express.static(path.join(__dirname)));
 
-// Health check endpoint for deployment platforms (Render, Railway, etc.)
+// Helper to get local Wi-Fi / LAN IPv4 addresses
+function getLocalIpAddresses() {
+    const interfaces = os.networkInterfaces();
+    const addresses = [];
+    for (const name of Object.keys(interfaces)) {
+        for (const iface of interfaces[name]) {
+            if (iface.family === 'IPv4' && !iface.internal) {
+                addresses.push({ name, ip: iface.address });
+            }
+        }
+    }
+    return addresses;
+}
+
+// Health check endpoint for monitoring & deployment
 app.get('/health', (req, res) => {
     res.status(200).json({
         status: 'ok',
@@ -28,15 +43,16 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// Socket.io initialization with CORS enabled
+// Socket.io initialization with 50MB buffer support for media (images, docs, videos)
 const io = new Server(server, {
     cors: {
         origin: "*",
         methods: ["GET", "POST"]
-    }
+    },
+    maxHttpBufferSize: 50 * 1024 * 1024 // 50MB payload limit for file transfers
 });
 
-// Active users registry: { [socketId]: { name: string, joinedAt: Date } }
+// Active users registry: { [socketId]: { id: string, name: string, joinedAt: Date } }
 const users = {};
 
 io.on('connection', (socket) => {
@@ -66,17 +82,17 @@ io.on('connection', (socket) => {
             userCount: onlineCount
         });
 
-        // Update the current user with confirmation and the current count
+        // Update the joining user with confirmation
         socket.emit('joined-success', {
             name: name,
             userCount: onlineCount
         });
 
-        // Broadcast updated count to all
+        // Broadcast updated count to all connected clients
         io.emit('online-count', onlineCount);
     });
 
-    // When a chat message is sent
+    // When a standard text message is sent
     socket.on('send', (rawMessage) => {
         const user = users[socket.id];
         if (!user) return;
@@ -100,6 +116,37 @@ io.on('connection', (socket) => {
         socket.broadcast.emit('receive', {
             message: message,
             name: user.name,
+            time: timeStr
+        });
+    });
+
+    // When a file (image, video, document, or archive) is sent
+    socket.on('send-file', (filePayload) => {
+        const user = users[socket.id];
+        if (!user || !filePayload || !filePayload.data) return;
+
+        const fileName = (typeof filePayload.name === 'string') ? filePayload.name.substring(0, 255) : 'file';
+        const fileType = (typeof filePayload.type === 'string') ? filePayload.type : 'application/octet-stream';
+        const fileSize = Number(filePayload.size) || 0;
+        const caption = (typeof filePayload.caption === 'string') ? filePayload.caption.trim().substring(0, 1000) : '';
+
+        // Enforce max 50MB file size limit
+        if (fileSize > 50 * 1024 * 1024) {
+            socket.emit('error-msg', 'File size exceeds the 50MB limit.');
+            return;
+        }
+
+        const now = new Date();
+        const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+        // Broadcast the file to other participants
+        socket.broadcast.emit('receive-file', {
+            sender: user.name,
+            name: fileName,
+            type: fileType,
+            size: fileSize,
+            data: filePayload.data,
+            caption: caption,
             time: timeStr
         });
     });
@@ -136,9 +183,13 @@ io.on('connection', (socket) => {
 
 const PORT = process.env.PORT || 8000;
 server.listen(PORT, '0.0.0.0', () => {
-    console.log(`=========================================`);
-    console.log(` ChitChat Server running on port ${PORT}`);
-    console.log(` Local:   http://localhost:${PORT}`);
-    console.log(` Health:  http://localhost:${PORT}/health`);
-    console.log(`=========================================`);
+    const localIps = getLocalIpAddresses();
+    console.log(`=======================================================`);
+    console.log(` 💬 ChitChat Server running on port ${PORT}`);
+    console.log(` 💻 Local:    http://localhost:${PORT}`);
+    localIps.forEach(net => {
+        console.log(` 📱 Wi-Fi:    http://${net.ip}:${PORT}  (${net.name})`);
+    });
+    console.log(` 🩺 Health:   http://localhost:${PORT}/health`);
+    console.log(`=======================================================`);
 });

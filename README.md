@@ -9,7 +9,11 @@ A fast, lightweight, and modern real-time chat application built with **Node.js*
 ## ✨ Features
 
 - ⚡ **Real-Time Bidirectional Messaging**: Low-latency communication powered by Socket.IO.
-- 🎨 **Modern Responsive UI**: Clean chat bubbles, smooth animations, glassmorphism header, and mobile-friendly layout.
+- 📎 **Media & File Sharing**: Send **images** (PNG, JPG, GIF, WebP), **short videos** (MP4, WebM), and **documents** (PDF, DOCX, XLSX, ZIP, etc.) up to 50MB.
+- 👁️ **In-Chat Preview & Lightbox**: Instant inline image viewer with zoom lightbox and video player.
+- ⬇️ **One-Click File Downloads**: Receivers can easily view and download any received files with original filenames.
+- 📱 **Multi-Device Wi-Fi Chat**: Chat between phones, tablets, and laptops on the same local Wi-Fi network.
+- 🎨 **Modern Responsive UI**: Clean chat bubbles, smooth animations, glassmorphism header, drag-and-drop file upload, and mobile layout.
 - 👥 **Live Online User Tracking**: Real-time counter of currently connected participants.
 - 🔔 **Audio Notifications**: Sound alerts on incoming messages with a 1-click mute/unmute toggle (`ring.mp3`).
 - ✍️ **Typing Indicators**: Live indication when someone is typing.
@@ -20,7 +24,7 @@ A fast, lightweight, and modern real-time chat application built with **Node.js*
 
 ## 🛠️ Tech Stack
 
-- **Backend**: Node.js, Express, Socket.IO, CORS
+- **Backend**: Node.js, Express, Socket.IO (50MB buffer support), CORS
 - **Frontend**: HTML5, CSS3 (Modern Flexbox & Glassmorphism), Vanilla JavaScript (ES6+)
 - **Assets**: Custom chat logo (`chat.png`), Audio notification sound (`ring.mp3`)
 
@@ -47,8 +51,14 @@ npm install
   npm run dev
   ```
 
-### 4. Open the App
-Visit [http://localhost:8000](http://localhost:8000) in your browser. Open multiple tabs or windows to chat in real time!
+### 4. Connect Devices
+
+- **On your PC**: Open [http://localhost:8000](http://localhost:8000)
+- **On Phone/Other Device (Same Wi-Fi)**: Open your PC's IP address:
+  ```
+  http://<YOUR_WIFI_IP>:8000
+  ```
+  *(The exact URL is automatically displayed in your terminal when you start the server, e.g. `http://192.168.1.5:8000`)*
 
 ---
 
@@ -60,9 +70,9 @@ Chat-App/
 │   └── workflows/
 │       └── node.js.yml      # GitHub CI workflow
 ├── css/
-│   └── style.css            # Responsive styles & theme variables
+│   └── style.css            # Responsive styles, media bubbles & theme variables
 ├── js/
-│   └── client.js            # Client-side Socket.IO events & UI logic
+│   └── client.js            # Client-side Socket.IO events, file uploads & UI logic
 ├── nodeServer/
 │   └── index.js             # Backward compatibility stub
 ├── .gitignore               # Ignored files (node_modules, logs)
