@@ -2,6 +2,16 @@
 
 A fast, lightweight, and modern real-time chat application built with **Node.js**, **Express**, and **Socket.IO**.
 
+[![Live Demo](https://img.shields.io/badge/Live-Demo-brightgreen?style=for-the-badge&logo=google-chrome)](https://7okesh.github.io/Chat-App/)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/7okesh/Chat-App/node.js.yml?branch=main&style=for-the-badge&logo=github)](https://github.com/7okesh/Chat-App/actions)
+
+---
+
+## 🌐 Live Demo
+
+- **Live Web App**: [https://7okesh.github.io/Chat-App/](https://7okesh.github.io/Chat-App/)
+- **Local Wi-Fi Network**: `http://localhost:8000` (or `http://192.168.1.5:8000` across devices)
+
 ![ChitChat Preview](chat.png)
 
 ---
