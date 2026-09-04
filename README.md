@@ -7,10 +7,13 @@ A fast, lightweight, and modern real-time chat application built with **Node.js*
 
 ---
 
-## 🌐 Live Demo
+## 🌐 Live Demo & 1-Click Deploy
 
-- **Live Web App**: [https://7okesh.github.io/Chat-App/](https://7okesh.github.io/Chat-App/)
+- **Live Web App (GitHub Pages)**: [https://7okesh.github.io/Chat-App/](https://7okesh.github.io/Chat-App/)
 - **Local Wi-Fi Network**: `http://localhost:8000` (or `http://192.168.1.5:8000` across devices)
+
+### 🚀 Deploy Full-Stack App with 1-Click (Free):
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/7okesh/Chat-App)
 
 ![ChitChat Preview](chat.png)
 
